@@ -1,4 +1,3 @@
-// LoginScreen.js
 import React, { useState } from 'react';
 import { 
   View, 
@@ -14,14 +13,23 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LoginCredentials } from '../../types/index';
+import { useAuth } from '@/context/AuthContext';
+import { router } from 'expo-router';
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+const LoginScreen: React.FC = () => {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  
+  const { login } = useAuth();
 
-  async function signInWithEmail() {
+  const isValidEmail = (email: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const signInWithEmail = async (): Promise<void> => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
@@ -34,25 +42,29 @@ const LoginScreen = () => {
 
     setLoading(true);
     try {
-      // Simulated API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      Alert.alert('Success', 'You have successfully logged in!');
-      // Navigate to main app here
+      const credentials: LoginCredentials = {
+        email,
+        password
+      };
+      
+      const success = await login(credentials);
+      
+      if (success) {
+        router.replace('/(tabs)'); 
+      } else {
+        Alert.alert('Error', 'Invalid email or password');
+      }
     } catch (error) {
-      Alert.alert('Error', error.message);
+      Alert.alert('Error', error instanceof Error ? error.message : 'An error occurred during login');
     } finally {
       setLoading(false);
     }
-  }
-
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
+      style={styles.keyboardView}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
@@ -61,7 +73,12 @@ const LoginScreen = () => {
 
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons 
+                name="mail-outline" 
+                size={20} 
+                color="#666" 
+                style={styles.inputIcon} 
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -74,7 +91,12 @@ const LoginScreen = () => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons 
+                name="lock-closed-outline" 
+                size={20} 
+                color="#666" 
+                style={styles.inputIcon} 
+              />
               <TextInput
                 style={[styles.input, { flex: 1 }]}
                 placeholder="Password"
@@ -95,7 +117,10 @@ const LoginScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword}>
+            <TouchableOpacity 
+              style={styles.forgotPassword}
+              
+            >
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
 
@@ -113,7 +138,7 @@ const LoginScreen = () => {
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Don't have an account? </Text>
-              <TouchableOpacity>
+              <TouchableOpacity >
                 <Text style={styles.signupLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>
@@ -124,7 +149,11 @@ const LoginScreen = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
+  keyboardView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#ffffff',

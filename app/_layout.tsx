@@ -9,6 +9,8 @@ import 'react-native-gesture-handler';
 import './global.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from '@/context/AuthContext';
+import { AppProvider } from '@/context/AppContext';
 
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
@@ -34,13 +36,16 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{headerShown:false}} />
-        <Stack.Screen name="+not-found" options={{headerShown: false}} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <AuthProvider>
+      <AppProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{headerShown:false}} />
+          <Stack.Screen name="+not-found" options={{headerShown: false}} />
+        </Stack>
+        <StatusBar style="auto" />
+      </AppProvider>
+    </AuthProvider>
+     
   );
 }
