@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
-import Entypo from '@expo/vector-icons/Entypo';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import {Entypo,AntDesign} from '@expo/vector-icons';
 
 const HomeScreen = () => {
   const previousMeetings = [
@@ -27,8 +27,10 @@ const HomeScreen = () => {
     </View>
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
+  return (         
+  <SafeAreaView style={styles.container}>
+
+    <ScrollView>
       <StatusBar barStyle="dark-content" />
       
       {/* Header */}
@@ -53,7 +55,10 @@ const HomeScreen = () => {
 
       {/* Meeting Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Meeting</Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding:2 }}>
+          <Text style={styles.sectionTitle}>Meeting</Text>
+          <AntDesign name="caretdown" size={24} color="black" />
+        </View>
         
         {/* Today's Meeting Card */}
         <View style={styles.meetingCard}>
@@ -80,14 +85,19 @@ const HomeScreen = () => {
             />
           ))}
         </View>
-      </View>
 
-      {/* Member's Details Section */}
+        {/* Member's Details Section */}
+      <View style={{borderWidth:1, borderColor:'#E8EEF9', marginTop:24, padding:2, borderRadius:12}}>
       <TouchableOpacity style={styles.memberSection}>
         <Text style={styles.sectionTitle}>Member's Details</Text>
-        <Text style={styles.arrow}>▶</Text>
+        <Text style={styles.arrow}><AntDesign name="caretright" size={24} color="black" /></Text>
       </TouchableOpacity>
+      </View>
+      </View>
+      
+    </ScrollView>
     </SafeAreaView>
+
   );
 };
 
@@ -193,6 +203,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   previousMeetings: {
+    borderWidth: 1,
+    borderColor: '#E8EEF9',
+    padding: 16,
+    borderRadius: 12,
     marginTop: 24,
   },
   previousTitle: {
