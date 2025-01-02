@@ -1,74 +1,236 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import Entypo from '@expo/vector-icons/Entypo';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const HomeScreen = () => {
+  const previousMeetings = [
+    { date: 'July 14, 2024', time: '10:40 am' },
+    { date: 'June 29, 2024', time: '10:40 am' },
+    { date: 'June 14, 2024', time: '10:40 am' },
+  ];
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const MeetingCircle = ({ letter }) => (
+    <View style={styles.circle}>
+      <Text style={styles.circleLetter}>{letter}</Text>
+    </View>
   );
-}
+
+  const PreviousMeetingItem = ({ date, time }) => (
+    <View style={styles.previousMeetingItem}>
+      <View style={[styles.circle, styles.smallCircle, styles.darkCircle]}>
+        <Text style={[styles.circleLetter, styles.smallLetter]}>J</Text>
+      </View>
+      <View style={styles.meetingInfo}>
+        <Text style={styles.meetingDate}>{date}</Text>
+        <Text style={styles.meetingTime}>{time}</Text>
+      </View>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.logoContainer}>
+          <Text style={styles.logo}>
+            <Entypo name="home" size={28} color="black" />
+          </Text>
+          <Text style={styles.logoText}>Neema</Text>
+        </View>
+      </View>
+
+      {/* Welcome Section */}
+      <View style={styles.welcomeSection}>
+        <Text style={styles.welcomeTitle}>Hi, Umaya.</Text>
+        <Text style={styles.welcomeSubtitle}>
+          <Text style={styles.welcomeLight}>Welcome to </Text>
+          <Text style={styles.welcomeDark}>Neema </Text>
+          <Text style={styles.welcomeLight}>Group</Text>
+        </Text>
+      </View>
+
+      {/* Meeting Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Meeting</Text>
+        
+        {/* Today's Meeting Card */}
+        <View style={styles.meetingCard}>
+          <View style={styles.todayMeeting}>
+            <MeetingCircle letter="M" />
+            <View style={styles.meetingInfo}>
+              <Text style={styles.meetingName}>Today's Meeting</Text>
+              <Text style={styles.meetingTime}>09:30 am</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.startButton}>
+            <Text style={styles.startButtonText}>+ START MEETING</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Previous Meetings */}
+        <View style={styles.previousMeetings}>
+          <Text style={styles.previousTitle}>Previous Meeting I</Text>
+          {previousMeetings.map((meeting, index) => (
+            <PreviousMeetingItem
+              key={index}
+              date={meeting.date}
+              time={meeting.time}
+            />
+          ))}
+        </View>
+      </View>
+
+      {/* Member's Details Section */}
+      <TouchableOpacity style={styles.memberSection}>
+        <Text style={styles.sectionTitle}>Member's Details</Text>
+        <Text style={styles.arrow}>▶</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    padding: 20,
+  },
+  logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
+  logo: {
+    fontSize: 24,
+    marginRight: 8,
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  welcomeSection: {
+    padding: 20,
+    paddingTop: 0,
+  },
+  welcomeTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  welcomeSubtitle: {
+    fontSize: 18,
+  },
+  welcomeLight: {
+    color: '#7D89B0',
+  },
+  welcomeDark: {
+    color: '#000',
+  },
+  section: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  meetingCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  todayMeeting: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  circle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#E8EEF9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  circleLetter: {
+    fontSize: 20,
+    color: '#000',
+    fontWeight: '500',
+  },
+  meetingInfo: {
+    flex: 1,
+  },
+  meetingName: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  meetingTime: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  startButton: {
+    backgroundColor: '#6C3CE3',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+  },
+  startButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  previousMeetings: {
+    marginTop: 24,
+  },
+  previousTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 12,
+  },
+  previousMeetingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  smallCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  darkCircle: {
+    backgroundColor: '#1E2D3D',
+  },
+  smallLetter: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  meetingDate: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  memberSection: {
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  arrow: {
+    fontSize: 16,
+    color: '#666',
   },
 });
+
+export default HomeScreen;
