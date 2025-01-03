@@ -1,70 +1,75 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
-import {Entypo,AntDesign} from '@expo/vector-icons';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, TextInput, ActivityIndicator } from 'react-native';
+import { Entypo, AntDesign } from '@expo/vector-icons';
 import { useApp } from '@/context/AppContext';
-import { MeetingData } from '../../types/app';
 
 const HomeScreen = () => {
-  const {generateMeetingCode, state, beginMeeting} = useApp()
-  const [codes, setCodes ] = useState<string[]>([])
-  const [codeInput , setCodeInput] = useState('')
-  const [meetingStarted, setMeetingStarted] = useState(false)
-  const [iseGenerating,setIsGenerating] = useState(false)
-  const [localError, setlocalError] = useState('')
+  const { generateMeetingCode, state, beginMeeting, resetMeetingData } = useApp();
+  const [codes, setCodes] = useState([]);
+  const [codeInput, setCodeInput] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [localError, setLocalError] = useState('');
+  const [meetingStarted, setMeetingStarted] = useState(false);
+
+  useEffect(() => {
+    if (state.meetingData) {
+      setIsGenerating(false);
+    }
+  }, [state.meetingData]);
 
   const handleGenerateCode = async () => {
-   try {
-    setIsGenerating(true)
-    setlocalError(null)
-    await generateMeetingCode()
-   } catch (error) {
-    setlocalError("Error occured while generating code")
-   } finally {
-    setIsGenerating(false)
-   }
-  }
-
-  const handleRmoveCode = (code: string) => {
-    setCodes(codes.filter(c => c !== code))
-  }
-
-  const inputCode = (e: React.FormEvent) =>{
-    e.preventDefault()
-    if(codeInput && !codes.includes(codeInput)){
-      setCodes([...codes, codeInput])
-      setCodeInput('')
-      setlocalError(null)
+    try {
+      setIsGenerating(true);
+      setLocalError('');
+      await generateMeetingCode();
+    } catch (error) {
+      setLocalError("Error occurred while generating code");
+      setIsGenerating(false);
     }
-  }
+  };
+
+  const handleAddCode = () => {
+    if (codeInput && !codes.includes(codeInput)) {
+      setCodes([...codes, codeInput]);
+      setCodeInput('');
+      setLocalError('');
+    }
+  };
+
+  const handleRemoveCode = (codeToRemove) => {
+    setCodes(codes.filter(code => code !== codeToRemove));
+  };
 
   const handleBeginMeeting = async () => {
-    if(!state.meetingData){
-      setlocalError("Please generate a code")
+    if (!state.meetingData) {
+      setLocalError("Please generate a code first");
       return;
     }
-    if(codes.length === 0){
-      setlocalError("Please add participants")
+    if (codes.length === 0) {
+      setLocalError("Please add at least one code");
       return;
     }
     try {
-      setlocalError(null);
-      await beginMeeting ({
-       meetingId: state.meetingData.meetingId,
-       code,
-       venue: "mpeketoni",
-       groupId: state.meetingData.groupId,
-      })
-      setMeetingStarted(true)
+      setLocalError('');
+      await beginMeeting({
+        meetingId: state.meetingData.meetingId,
+        codes,
+        venue: "mpeketoni",
+        groupId: state.meetingData.groupId,
+      });
+      setMeetingStarted(true);
     } catch (error) {
-      setlocalError("Error occured while starting meeting")
+      setLocalError("Error occurred while starting meeting");
     }
-  }
+  };
 
-  const previousMeetings = [
-    { date: 'July 14, 2024', time: '10:40 am' },
-    { date: 'June 29, 2024', time: '10:40 am' },
-    { date: 'June 14, 2024', time: '10:40 am' },
-  ];
+  const handleStartNewMeeting = () => {
+    setMeetingStarted(false);
+    setCodes([]);
+    setCodeInput('');
+    setLocalError('');
+    resetMeetingData();
+  };
 
   const MeetingCircle = ({ letter }) => (
     <View style={styles.circle}>
@@ -72,91 +77,158 @@ const HomeScreen = () => {
     </View>
   );
 
-  const PreviousMeetingItem = ({ date, time }) => (
-    <View style={styles.previousMeetingItem}>
-      <View style={[styles.circle, styles.smallCircle, styles.darkCircle]}>
-        <Text style={[styles.circleLetter, styles.smallLetter]}>J</Text>
-      </View>
-      <View style={styles.meetingInfo}>
-        <Text style={styles.meetingDate}>{date}</Text>
-        <Text style={styles.meetingTime}>{time}</Text>
-      </View>
-    </View>
-  );
-
- 
-
-  return (         
-  <SafeAreaView style={styles.container}>
-
-    <ScrollView>
-      <StatusBar barStyle="dark-content" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <Text style={styles.logo}>
-            <Entypo name="home" size={28} color="black" />
-          </Text>
-          <Text style={styles.logoText}>Neema</Text>
+  const renderMeetingSection = () => {
+    if (isGenerating) {
+      return (
+        <View style={styles.meetingCard}>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#6C3CE3" />
+            <Text style={styles.loadingText}>Generating meeting code...</Text>
+          </View>
         </View>
-      </View>
+      );
+    }
 
-      {/* Welcome Section */}
-      <View style={styles.welcomeSection}>
-        <Text style={styles.welcomeTitle}>Hi, Umaya.</Text>
-        <Text style={styles.welcomeSubtitle}>
-          <Text style={styles.welcomeLight}>Welcome to </Text>
-          <Text style={styles.welcomeDark}>Neema </Text>
-          <Text style={styles.welcomeLight}>Group</Text>
-        </Text>
-      </View>
-
-      {/* Meeting Section */}
-      <View style={styles.section}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding:2 }}>
-          <Text style={styles.sectionTitle}>Meeting</Text>
-          <AntDesign name="caretdown" size={24} color="black" />
-        </View>
-        
-        {/* Today's Meeting Card */}
+    if (state.meetingData) {
+      return (
         <View style={styles.meetingCard}>
           <View style={styles.todayMeeting}>
             <MeetingCircle letter="M" />
             <View style={styles.meetingInfo}>
-              <Text style={styles.meetingName}>Today's Meeting</Text>
-              <Text style={styles.meetingTime}>09:30 am</Text>
+              <Text style={styles.meetingName}>Meeting Code Generated</Text>
+              <Text style={styles.meetingTime}>ID: {state.meetingData.meetingId}</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.startButton} onPress={handleGenerateCode}>
-            <Text style={styles.startButtonText}>+ START MEETING</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Previous Meetings */}
-        <View style={styles.previousMeetings}>
-          <Text style={styles.previousTitle}>Previous Meeting I</Text>
-          {previousMeetings.map((meeting, index) => (
-            <PreviousMeetingItem
-              key={index}
-              date={meeting.date}
-              time={meeting.time}
+          
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={codeInput}
+              onChangeText={setCodeInput}
+              placeholder="Enter code"
+              placeholderTextColor="#666"
             />
-          ))}
+            <TouchableOpacity 
+              style={[styles.addButton, !codeInput && styles.addButtonDisabled]}
+              onPress={handleAddCode}
+              disabled={!codeInput}
+            >
+              <Text style={styles.addButtonText}>Add Code</Text>
+            </TouchableOpacity>
+          </View>
+
+          {codes.length > 0 && (
+            <View style={styles.codesList}>
+              {codes.map((code, index) => (
+                <View key={index} style={styles.codeItem}>
+                  <Text style={styles.codeText}>{code}</Text>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveCode(code)}
+                    style={styles.removeButton}
+                  >
+                    <Text style={styles.removeButtonText}>Remove</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {localError ? <Text style={styles.errorText}>{localError}</Text> : null}
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={styles.restartButton}
+              onPress={handleStartNewMeeting}
+            >
+              <Text style={styles.restartButtonText}>Restart</Text>
+            </TouchableOpacity>
+
+            {meetingStarted ? (
+              <TouchableOpacity 
+                style={styles.startButton}
+                onPress={() => {/* Handle next step */}}
+              >
+                <Text style={styles.startButtonText}>Next</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity 
+                style={[styles.startButton, (codes.length === 0 || state.loading) && styles.startButtonDisabled]}
+                onPress={handleBeginMeeting}
+                disabled={codes.length === 0 || state.loading}
+              >
+                <Text style={styles.startButtonText}>
+                  {state.loading ? 'Starting...' : 'Start Meeting'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.meetingCard}>
+        <View style={styles.todayMeeting}>
+          <MeetingCircle letter="M" />
+          <View style={styles.meetingInfo}>
+            <Text style={styles.meetingName}>Today's Meeting</Text>
+            <Text style={styles.meetingTime}>{new Date().toLocaleTimeString()}</Text>
+          </View>
+        </View>
+        <TouchableOpacity 
+          style={styles.startButton} 
+          onPress={handleGenerateCode}
+          disabled={isGenerating}
+        >
+          <Text style={styles.startButtonText}>GET CODE</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  // Rest of your component remains the same...
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <StatusBar barStyle="dark-content" />
+        
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.logo}>
+              <Entypo name="home" size={28} color="black" />
+            </Text>
+            <Text style={styles.logoText}>Neema</Text>
+          </View>
         </View>
 
-        {/* Member's Details Section */}
-      <View style={{borderWidth:1, borderColor:'#E8EEF9', marginTop:24, padding:2, borderRadius:12}}>
-      <TouchableOpacity style={styles.memberSection}>
-        <Text style={styles.sectionTitle}>Member's Details</Text>
-        <Text style={styles.arrow}><AntDesign name="caretright" size={24} color="black" /></Text>
-      </TouchableOpacity>
-      </View>
-      </View>
-      
-    </ScrollView>
-    </SafeAreaView>
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeTitle}>Hi, Umaya.</Text>
+          <Text style={styles.welcomeSubtitle}>
+            <Text style={styles.welcomeLight}>Welcome to </Text>
+            <Text style={styles.welcomeDark}>Neema </Text>
+            <Text style={styles.welcomeLight}>Group</Text>
+          </Text>
+        </View>
 
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Meeting</Text>
+            <AntDesign name="caretdown" size={24} color="black" />
+          </View>
+          
+          {renderMeetingSection()}
+
+          <View style={styles.memberDetailsContainer}>
+            <TouchableOpacity style={styles.memberSection}>
+              <Text style={styles.sectionTitle}>Member's Details</Text>
+              <Text style={styles.arrow}>
+                <AntDesign name="caretright" size={24} color="black" />
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -304,6 +376,121 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 2,
+    marginBottom: 16,
+  },
+  inputContainer: {
+    marginVertical: 16,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#E8EEF9',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 8,
+    fontSize: 14,
+  },
+  meetingDetails: {
+    marginTop: 16,
+    padding: 16,
+    backgroundColor: '#F8F9FD',
+    borderRadius: 8,
+  },
+  meetingDetailText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  },
+  memberDetailsContainer: {
+    borderWidth: 1,
+    borderColor: '#E8EEF9',
+    marginTop: 24,
+    borderRadius: 12,
+  },
+  addButton: {
+    backgroundColor: '#6C3CE3',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  addButtonDisabled: {
+    backgroundColor: '#A8A8A8',
+  },
+  addButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  codesList: {
+    marginTop: 16,
+  },
+  codeItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FD',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  codeText: {
+    fontSize: 16,
+  },
+  removeButton: {
+    backgroundColor: '#FF4444',
+    borderRadius: 6,
+    padding: 8,
+  },
+  removeButtonText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  restartButton: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#6C3CE3',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  restartButtonText: {
+    color: '#6C3CE3',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+ 
+  startButtonDisabled: {
+    backgroundColor: '#A8A8A8',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#666',
+  },
+
+
+  
 });
 
 export default HomeScreen;

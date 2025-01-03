@@ -55,8 +55,3 @@ export interface Step {
   status: StepStatus;
 }
 
-export interface MeetingState {
-  meetingId: string;
-  members: Member[];
-  currentStep: string;
-}

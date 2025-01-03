@@ -107,6 +107,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         throw new Error(`API call failed: ${response.statusText}. ${JSON.stringify(errorData)}`);
       }
       const data = await response.json();
+      console.log("Meeting Code", response)
       dispatch(actions.generateMeetingCodeSuccess(data));
     } catch (error) {
       dispatch(actions.generateMeetingCodeFailure(error instanceof Error ? error.message : 'An unknown error occurred'));

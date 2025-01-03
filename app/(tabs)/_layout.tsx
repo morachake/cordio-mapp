@@ -3,6 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,7 +15,6 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
           },
           default: {},
@@ -22,11 +22,21 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen
         name="index"
-      
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="home" size={size} color={color} />
+          ),
+        }}
       />
       <Tabs.Screen
         name="explore"
-       
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name="compass" size={size} color={color} />
+          ),
+        }}
       />
     </Tabs>
   );

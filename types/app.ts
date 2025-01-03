@@ -1,4 +1,3 @@
-import { MeetingState } from ".";
 
 export interface Member {
   id: number;
@@ -62,6 +61,7 @@ export interface MeetingData {
   venue: string;
   status: string;
   code: string[],
+  codes: number;
 }
 
 export  interface StepData {
@@ -105,3 +105,8 @@ export interface ProgressBarStep {
   status: 'current' | 'complete' | 'upcoming';
 }
 
+export interface MeetingState {
+  meetingId: string;
+  members: Member[];
+  currentStep: string;
+}
