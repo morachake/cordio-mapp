@@ -1,4 +1,4 @@
-import { User } from '../types/index';
+import { AuthState, User } from '../types/index';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -7,11 +7,12 @@ export const LOGOUT = 'LOGOUT';
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAILURE = 'REGISTER_FAILURE';
-
+export const AUTHTOKEN = 'AUTHTOKEN';
 export type AuthAction =
   | { type: typeof LOGIN_REQUEST }
   | { type: typeof LOGIN_SUCCESS; payload: User }
   | { type: typeof LOGIN_FAILURE; payload: string }
+  | {type: typeof AUTHTOKEN; payload: string}
   | { type: typeof LOGOUT }
   | { type: typeof REGISTER_REQUEST }
   | { type: typeof REGISTER_SUCCESS; payload: User }
@@ -27,17 +28,6 @@ export const registerFailure = (error: string) => ({ type: REGISTER_FAILURE, pay
 
 export type AuthDispatch = React.Dispatch<AuthAction>;
 
-export interface AuthState {
-  user: User | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export const initialState: AuthState = {
-  user: null,
-  isLoading: false,
-  error: null,
-};
 
 export const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -46,7 +36,7 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
       return { ...state, isLoading: true, error: null };
     case LOGIN_SUCCESS:
     case REGISTER_SUCCESS:
-      return { ...state, isLoading: false, user: action.payload, error: null };
+      return { ...state, isLoading: false, user: action.payload, error: null , token: action.payload.token};
     case LOGIN_FAILURE:
     case REGISTER_FAILURE:
       return { ...state, isLoading: false, error: action.payload };

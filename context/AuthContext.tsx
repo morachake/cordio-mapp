@@ -1,15 +1,14 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { LoginCredentials, RegisterCredentials, User } from '../types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import {
-  AuthState,
   authReducer,
-  initialState,
   loginRequest,
   loginSuccess,
   loginFailure,
   logout,
 } from './authActions';
+import { initialState } from '@/reducer/appReducer';
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<boolean>;
@@ -24,23 +23,23 @@ const API_URL = 'http://localhost:8081/api/v1/auth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState); 
-
+  
   useEffect(() => {
     const initializeAuth = async () => {
       try {
         const [storedUser, storedToken] = await Promise.all([
-          AsyncStorage.getItem('user'),
-          AsyncStorage.getItem('token')
+          SecureStore.getItemAsync('user'),
+          SecureStore.getItemAsync('token')
         ]);
 
         if (storedUser && storedToken) {
           const userData = JSON.parse(storedUser);
-          dispatch(loginSuccess(userData));
+          dispatch(loginSuccess(userData));;
         }
       } catch {
         await Promise.all([
-          AsyncStorage.removeItem('user'),
-          AsyncStorage.removeItem('token')
+          SecureStore.deleteItemAsync('user'),
+          SecureStore.deleteItemAsync('token')
         ]);
       }
     };
@@ -60,8 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("Here is login res",data);
       if (response.ok) {
         await Promise.all([
-          AsyncStorage.setItem('user', JSON.stringify(data)),
-          AsyncStorage.setItem('token', data.token)
+          SecureStore.setItemAsync('user', JSON.stringify(data)),
+          SecureStore.setItemAsync('token', data.token)
         ]);
         dispatch(loginSuccess(data));
         return true;
@@ -76,18 +75,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logoutUser = async () => {
     await Promise.all([
-      AsyncStorage.removeItem('user'),
-      AsyncStorage.removeItem('token')
+      SecureStore.deleteItemAsync('user'),
+      SecureStore.deleteItemAsync('token')
     ]);
     dispatch(logout());
   };
 
   const getToken = async () => {
-    return await AsyncStorage.getItem('token');
+    if (state.user?.token) {
+      return state.user.token;
+    }
+    return await SecureStore.getItemAsync('token');
   };
 
   const isLoggedIn = async () => {
-    const token = await AsyncStorage.getItem('token');
+    const token = await SecureStore.getItemAsync('token');
     return Boolean(token);
   };
 

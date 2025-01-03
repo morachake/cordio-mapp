@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AppState,  GroupDetails, Member, MeetingData } from '../types/app';
 import { useAuth } from './AuthContext';
 import { initialState, appReducer } from '../reducer/appReducer';
 import * as actions from '../reducer/appActions';
+import * as SecureStore from 'expo-secure-store';
 
 const BASE_URL = 'http://localhost:8081/api/v1';
 
@@ -29,13 +29,15 @@ const AppContext = createContext<AppContextType | null>(null);
 
 
 export function AppProvider({ children }: { children: ReactNode }) {
+
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { getToken } = useAuth();
- 
+   console.log("Here is state",state);
+   console.log("Here is app token", SecureStore.getItemAsync('token'));
   useEffect(() => {
     const loadState = async () => {
       try {
-        const storedStateString = await AsyncStorage.getItem('appState');
+        const storedStateString = await SecureStore.getItemAsync('appState');
         if (storedStateString) {
           const parsedState = JSON.parse(storedStateString);
           if (parsedState) {
@@ -54,11 +56,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
               });
             }
             console.log('Loaded state from storage:', parsedState);
+            console.log(SecureStore.getItemAsync('token'));
           }
         }
       } catch (error) {
         console.error('Failed to load state from storage:', error);
-        await AsyncStorage.removeItem('appState');
+        await SecureStore.getItemAsync('appState');
       }
     };
 
@@ -75,10 +78,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
           stepData: state.stepData
         };
         const serializedState = JSON.stringify(stateToStore);
-        if (serializedState) {
-          await AsyncStorage.setItem('appState', serializedState);
-          console.log('State saved successfully');
-        }
+            if (serializedState) {
+              // Fix: the value should be the second parameter, not the options
+              await SecureStore.setItemAsync('appState', serializedState); // Fixed this line
+              console.log('State saved successfully');
+            }
       } catch (error) {
         console.error('Failed to save state to storage:', error);
       }
@@ -91,7 +95,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const generateMeetingCode = async () => {
     dispatch(actions.generateMeetingCodeRequest());
     try {
-      const token = getToken();
+      const token = await getToken();
       if (!token) {
         throw new Error('No authentication token found');
       }
@@ -115,6 +119,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const beginMeeting = async (payload:MeetingData ) => {
+    console.log('Begin meeting code');
     dispatch(actions.beginMeetingRequest());
     try {
       const token = getToken();

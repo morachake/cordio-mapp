@@ -82,7 +82,9 @@ export interface AppState {
   currentStep: string;
   stepData: StepData;
 //   initialState: initialState;
-  members: Member[] | null;
+    members: Member[] | null;
+    token: string | null;
+    loading: boolean;
 }
 
 export interface GenerateMeetingCodeResponse {

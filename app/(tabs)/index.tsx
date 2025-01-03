@@ -6,7 +6,7 @@ import { useApp } from '@/context/AppContext';
 const HomeScreen = () => {
   const { generateMeetingCode, state, beginMeeting, resetMeetingData } = useApp();
   const [codes, setCodes] = useState([]);
-  const [codeInput, setCodeInput] = useState('');
+  const [codeInput, setCodeInput] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [localError, setLocalError] = useState('');
   const [meetingStarted, setMeetingStarted] = useState(false);
@@ -53,7 +53,7 @@ const HomeScreen = () => {
       setLocalError('');
       await beginMeeting({
         meetingId: state.meetingData.meetingId,
-        codes,
+        codes: [codes],
         venue: "mpeketoni",
         groupId: state.meetingData.groupId,
       });
