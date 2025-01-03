@@ -1,8 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
 import {Entypo,AntDesign} from '@expo/vector-icons';
+import { useApp } from '@/context/AppContext';
+import { MeetingData } from '../../types/app';
 
 const HomeScreen = () => {
+  const {generateMeetingCode, state, beginMeeting} = useApp()
+  const [codes, setCodes ] = useState<string[]>([])
+  const [codeInput , setCodeInput] = useState('')
+  const [meetingStarted, setMeetingStarted] = useState(false)
+  const [iseGenerating,setIsGenerating] = useState(false)
+  const [localError, setlocalError] = useState('')
+
+  const handleGenerateCode = async () => {
+   try {
+    setIsGenerating(true)
+    setlocalError(null)
+    await generateMeetingCode()
+   } catch (error) {
+    setlocalError("Error occured while generating code")
+   } finally {
+    setIsGenerating(false)
+   }
+  }
+
+  const handleRmoveCode = (code: string) => {
+    setCodes(codes.filter(c => c !== code))
+  }
+
+  const inputCode = (e: React.FormEvent) =>{
+    e.preventDefault()
+    if(codeInput && !codes.includes(codeInput)){
+      setCodes([...codes, codeInput])
+      setCodeInput('')
+      setlocalError(null)
+    }
+  }
+
+  const handleBeginMeeting = async () => {
+    if(!state.meetingData){
+      setlocalError("Please generate a code")
+      return;
+    }
+    if(codes.length === 0){
+      setlocalError("Please add participants")
+      return;
+    }
+    try {
+      setlocalError(null);
+      await beginMeeting ({
+       meetingId: state.meetingData.meetingId,
+       code,
+       venue: "mpeketoni",
+       groupId: state.meetingData.groupId,
+      })
+      setMeetingStarted(true)
+    } catch (error) {
+      setlocalError("Error occured while starting meeting")
+    }
+  }
+
   const previousMeetings = [
     { date: 'July 14, 2024', time: '10:40 am' },
     { date: 'June 29, 2024', time: '10:40 am' },
@@ -26,6 +83,8 @@ const HomeScreen = () => {
       </View>
     </View>
   );
+
+ 
 
   return (         
   <SafeAreaView style={styles.container}>
@@ -69,7 +128,7 @@ const HomeScreen = () => {
               <Text style={styles.meetingTime}>09:30 am</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.startButton}>
+          <TouchableOpacity style={styles.startButton} onPress={handleGenerateCode}>
             <Text style={styles.startButtonText}>+ START MEETING</Text>
           </TouchableOpacity>
         </View>
