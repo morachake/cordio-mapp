@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const MemberDetails= () => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.memberSection}>
+      <TouchableOpacity style={styles.memberSection} onPress={( ) => router.push('/home/attendance')}>
         <Text style={styles.sectionTitle}>Member's Details</Text>
         <Text style={styles.arrow}>
           <AntDesign name="caretright" size={24} color="black" />

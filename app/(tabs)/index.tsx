@@ -1,12 +1,12 @@
 import MemberDetails from '@/components/ memberDetails';
 import Header from '@/components/header';
 import MeetingSection from '@/components/meeting';
-import MeetingCircle from '@/components/MeetingCircle';
 import PreviousMeeting from '@/components/previousMeeting';
 import Welcome from '@/components/Welcome';
 import { useApp } from '@/context/AppContext';
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import { View, StyleSheet, StatusBar, ScrollView } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const HomeScreen = () => {
