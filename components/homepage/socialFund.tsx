@@ -1,8 +1,8 @@
 import {StyleSheet, View ,Text, ScrollView, TouchableOpacity} from "react-native";
-import PaymentMethod from "../socialFund/paymentMethod";
-import MemberCard from "../socialFund/member";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import MemberCard from "../cards/memberCard";
+import PaymentMethod from "../cards/paymentMethod";
 
 export default function SocialFund() {
     const [expandedMember, setExpandedMember] = useState(5);

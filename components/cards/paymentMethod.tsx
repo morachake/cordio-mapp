@@ -33,7 +33,7 @@ export default function PaymentMethod ({ method, icon })  {
         alignItems: 'center',
       },
       paymentIcon: {
-        marginRight: 8,
+        marginRight: 10,
       },
       paymentText: {
         fontSize: 14,
