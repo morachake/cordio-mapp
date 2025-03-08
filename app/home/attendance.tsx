@@ -82,14 +82,13 @@ const Attendance = () => {
           <FontAwesome name="arrow-left" size={18} color="black" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{steps[currentStep].title}</Text>
-        <View style={styles.headerRightSpace} />
+
       </View>
       
       {/* Content area */}
       <ScrollView style={styles.contentContainer}>
         <CurrentStepComponent 
-          formData={formData}
-          setFormData={setFormData}
+
         />
       </ScrollView>
       
@@ -125,21 +124,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+        flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
   },
   backButton: {
+    marginRight: 16,
     padding: 8,
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
     color: '#333',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   headerRightSpace: {
     width: 24, // For balanced header
