@@ -5,10 +5,10 @@ import SocialFund from '@/components/homepage/socialFund';
 import Savings from '@/components/homepage/savings';
 import FInes from '@/components/homepage/fines';
 import Summary from '@/components/homepage/summary';
-import IssueLoans from '@/components/homepage/issueLoans';
 import MeetingAttendance from '@/components/homepage/meetingAttendance';
 import Loans from '@/components/homepage/loans';
 import { FontAwesome } from '@expo/vector-icons';
+import LoanRequest from '@/components/homepage/LoanRequest';
 
 const Attendance = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -41,7 +41,7 @@ const Attendance = () => {
       title: 'Summary',
     },
     {
-      component: IssueLoans,
+      component: LoanRequest,
       title: 'Issue Loans',
     }
   ];

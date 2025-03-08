@@ -31,11 +31,11 @@ export default function Savings() {
   
         <View style={styles.balances}>
           <View style={styles.balanceItem}>
-            <Text style={styles.balanceLabel}>Previous Balance</Text>
+            <Text style={styles.balanceLabel}>Previous Savings</Text>
             <Text style={styles.balanceAmount}>Ksh. 40,000</Text>
           </View>
           <View style={styles.balanceItem}>
-            <Text style={styles.balanceLabel}>Current Balance</Text>
+            <Text style={styles.balanceLabel}>Current Savings</Text>
             <Text style={styles.balanceAmount}>Ksh. 40,600</Text>
           </View>
         </View>

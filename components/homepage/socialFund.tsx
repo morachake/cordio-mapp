@@ -29,11 +29,11 @@ export default function SocialFund() {
   
         <View style={styles.balances}>
           <View style={styles.balanceItem}>
-            <Text style={styles.balanceLabel}>Previous Balance</Text>
+            <Text style={styles.balanceLabel}>Previous SocialFund</Text>
             <Text style={styles.balanceAmount}>Ksh. 40,000</Text>
           </View>
           <View style={styles.balanceItem}>
-            <Text style={styles.balanceLabel}>Current Balance</Text>
+            <Text style={styles.balanceLabel}>Current SocialFund</Text>
             <Text style={styles.balanceAmount}>Ksh. 40,600</Text>
           </View>
         </View>
