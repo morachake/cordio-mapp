@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import MemberCard from "../cards/memberCard";
 import PaymentMethod from "../cards/paymentMethod";
+import WalletPaymentFlow from "../WalletPaymentFlow";
 
 export default function SocialFund() {
     const [expandedMember, setExpandedMember] = useState(5);
@@ -50,7 +51,7 @@ export default function SocialFund() {
               />
               {expandedMember === index && (
                 <View style={styles.paymentMethods}>
-                  <PaymentMethod method="Wallet" icon="wallet" />
+                  <WalletPaymentFlow amount="20"/>
                   <PaymentMethod method="Cash" icon="cash" />
                 </View>
               )}

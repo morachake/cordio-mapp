@@ -1,21 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View,Text } from "react-native";
 
-export default function PaymentMethod ({ method, icon })  {
+export default function PaymentMethod ({ method, icon, amount, user, onPaymentInitiated })  {
     return (
-      <TouchableOpacity style={styles.paymentMethod}>
-        <View style={styles.paymentMethodContent}>
-          <View style={styles.paymentIcon}>
-            {icon === "wallet" ? (
-              <Ionicons name="wallet-outline" size={20} color="#333" />
-            ) : (
-              <Ionicons name="cash-outline" size={20} color="#333" />
-            )}
-          </View>
-          <Text style={styles.paymentText}>Pay with {method}</Text>
+      <TouchableOpacity style={styles.paymentMethod} onPress={onPaymentInitiated}>
+      <View style={styles.paymentMethodContent}>
+        <View style={styles.paymentIcon}>
+          {icon === "wallet" ? (
+            <Ionicons name="wallet-outline" size={20} color="#333" />
+          ) : (
+            <Ionicons name="cash-outline" size={20} color="#333" />
+          )}
         </View>
-        <Ionicons name="arrow-forward" size={18} color="#777" />
-      </TouchableOpacity>
+        <Text style={styles.paymentText}>Pay with {method}</Text>
+      </View>
+      <Ionicons name="arrow-forward" size={18} color="#777" />
+    </TouchableOpacity>
     );
   };
   
