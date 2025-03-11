@@ -1,6 +1,5 @@
 import MemberDetails from '@/components/ memberDetails';
 import Header from '@/components/header';
-import MeetingSection from '@/components/meeting';
 import PreviousMeeting from '@/components/previousMeeting';
 import Welcome from '@/components/Welcome';
 import { useApp } from '@/context/AppContext';
@@ -19,7 +18,6 @@ const HomeScreen = () => {
         <Header />
         <Welcome userName="Umaya" />
         <View style={styles.section}>
-          <MeetingSection />
           <PreviousMeeting />
           <MemberDetails />
         </View>

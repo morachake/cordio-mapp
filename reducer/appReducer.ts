@@ -1,4 +1,5 @@
-import { AppState, AppAction } from '../types/app';
+import { AppState } from '../types/app';
+import { AppAction } from './appActions';
 
 export const initialState: AppState = {
   isLoading: false,
