@@ -190,13 +190,14 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: 10,
+    padding: 16,
   },
   badge: {
     backgroundColor: '#E5E7EB',
     paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 16,
+    borderRadius: 5,
   },
   badgeText: {
     fontSize: 14,

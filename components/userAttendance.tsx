@@ -150,9 +150,11 @@ function AttendanceOption({ label, isSelected, onSelect, color }) {
 const styles = StyleSheet.create({
   outerContainer: {
     marginBottom: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
-    width: '100%',
+    width: '95%',
     padding: 16,
     borderWidth: 1,
     borderColor: '#e0e0e0',

@@ -23,7 +23,7 @@ const LoginScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   
-  const { login } = useAuth();
+  const { login, error } = useAuth();
 
   const isValidEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -43,22 +43,34 @@ const LoginScreen: React.FC = () => {
     setLoading(true);
     try {
       const credentials: LoginCredentials = {
-        email,
+        email: email.trim(),
         password
       };
       
       const success = await login(credentials);
       
       if (success) {
+        console.log('Login successful, navigating to tabs');
         router.replace('/(tabs)'); 
       } else {
-        Alert.alert('Error', 'Invalid email or password');
+        // Use the error from auth context if available, otherwise use a generic message
+        const errorMessage = error || 'Invalid email or password';
+        Alert.alert('Login Failed', errorMessage);
       }
     } catch (error) {
+      console.error('Login error:', error);
       Alert.alert('Error', error instanceof Error ? error.message : 'An error occurred during login');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleForgotPassword = () => {
+    // Implement forgot password functionality or navigation
+  };
+
+  const handleSignUp = () => {
+    // Navigate to sign up screen
   };
 
   return (
@@ -87,6 +99,7 @@ const LoginScreen: React.FC = () => {
                 autoCapitalize="none"
                 keyboardType="email-address"
                 autoComplete="email"
+                testID="email-input"
               />
             </View>
 
@@ -104,10 +117,12 @@ const LoginScreen: React.FC = () => {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
+                testID="password-input"
               />
               <TouchableOpacity 
                 onPress={() => setShowPassword(!showPassword)}
                 style={styles.eyeIcon}
+                accessibilityLabel={showPassword ? "Hide password" : "Show password"}
               >
                 <Ionicons 
                   name={showPassword ? "eye-outline" : "eye-off-outline"} 
@@ -119,7 +134,8 @@ const LoginScreen: React.FC = () => {
 
             <TouchableOpacity 
               style={styles.forgotPassword}
-              
+              onPress={handleForgotPassword}
+              accessibilityLabel="Forgot password"
             >
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -128,6 +144,8 @@ const LoginScreen: React.FC = () => {
               style={[styles.loginButton, loading && styles.loginButtonDisabled]}
               onPress={signInWithEmail}
               disabled={loading}
+              accessibilityLabel="Sign in"
+              testID="login-button"
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
@@ -138,7 +156,7 @@ const LoginScreen: React.FC = () => {
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Don't have an account? </Text>
-              <TouchableOpacity >
+              <TouchableOpacity onPress={handleSignUp} accessibilityLabel="Sign up">
                 <Text style={styles.signupLink}>Sign Up</Text>
               </TouchableOpacity>
             </View>
