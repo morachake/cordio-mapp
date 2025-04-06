@@ -5,16 +5,24 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import 'react-native-gesture-handler';
+import './global.css';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from '@/context/AuthContext';
+import { AppProvider } from '@/context/AppContext';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    Bold: require('../assets/fonts/Roboto-Bold.ttf'),
+    Regular: require('../assets/fonts/Roboto-Regular.ttf'),
+    Light: require('../assets/fonts/Roboto-Light.ttf'),
+    Medium: require('../assets/fonts/Roboto-Medium.ttf'),
+    Thin: require('../assets/fonts/Roboto-Thin.ttf'),
+    Italic: require('../assets/fonts/Roboto-Italic.ttf'),
   });
 
   useEffect(() => {
@@ -28,12 +36,21 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <AuthProvider>
+      <AppProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)"  />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name='home'  />
+          <Stack.Screen name="+not-found"  />
+        </Stack>
+        <StatusBar style="auto" />
+      </AppProvider>
+    </AuthProvider>
+     
   );
 }
